@@ -1,3 +1,5 @@
+package tests;
+
 import com.sun.javafx.collections.MappingChange;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;

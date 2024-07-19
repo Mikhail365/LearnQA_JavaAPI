@@ -1,3 +1,5 @@
+package tests;
+
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
@@ -20,7 +22,5 @@ public class ExTwelve {
         List<Header> homeHeaders = responseResult.getHeaders().getList("x-secret-homework-header");
         assertEquals(trueHeaders.get(0).toString(),homeHeaders.get(0).toString(),"object is not same");
 
-
-       /* assertEquals(trueCookie,authCookie,"Cookie is not true");*/
     }
 }

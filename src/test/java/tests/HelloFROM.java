@@ -1,3 +1,5 @@
+package tests;
+
 import groovy.json.JsonOutput;
 
 public class HelloFROM {
