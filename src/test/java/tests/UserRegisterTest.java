@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static lib.DataGenerator.deletedParamInBody;
+import static lib.DataGenerator.generateDatafromCreatedUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,5 +46,30 @@ public class UserRegisterTest {
 
 
 
+     }
+     @Test
+     public void cutName(){
+          Map<String,String> cutName = new HashMap<>();
+          cutName.put("username","t");
+          Response response = RestAssured
+                  .given()
+                  .body(generateDatafromCreatedUser(cutName))
+                  .post("https://playground.learnqa.ru/api/user/")
+                  .andReturn();
+          assertEquals("The value of 'username' field is too short",response.asString(),"Error not Equals");
+     }
+
+     @Test
+     public void veryLongName(){
+          Map<String,String> longName = new HashMap<>();
+          longName.put("username","Равным образом консультация с широким активом представляет собой интересный эксперимент"+
+                          "проверки позиций, занимаемых участниками в отношении поставленных задач. Не следует, однако забывать,"+
+                          "что дальнейшее развитие различных форм деятельности влечет за вывы");
+          Response response = RestAssured
+                  .given()
+                  .body(generateDatafromCreatedUser(longName))
+                  .post("https://playground.learnqa.ru/api/user/")
+                  .andReturn();
+          assertEquals("The value of 'username' field is too long",response.asString(),"Error not Equals");
      }
 }
