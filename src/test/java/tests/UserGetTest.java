@@ -1,15 +1,21 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Epic("Get data user")
 public class UserGetTest extends BaseTestCase {
+    @Description("Get data about other user")
+    @DisplayName("Positive test for get data other user")
     @Test
     public void forbidenDataForOtherUser() {
         Map<String, String> authData = new HashMap<>();

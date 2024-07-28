@@ -1,8 +1,11 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,9 +17,11 @@ import static lib.DataGenerator.deletedParamInBody;
 import static lib.DataGenerator.generateDatafromCreatedUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+@Epic("User registration cases")
 public class UserRegisterTest {
      @Test
+     @Description("Created user with error email")
+     @DisplayName("Negative test for created user")
      public void createdUserWithErrorEmail(){
           Map<String,String> data = new HashMap<>();
           data.put("username","test");
@@ -33,6 +38,8 @@ public class UserRegisterTest {
           assertEquals("Invalid email format",response.asString(),"response not Equals");
      }
      @ParameterizedTest
+     @Description("Created user w/o param in value source")
+     @DisplayName("Negative test for created user with error body")
      @ValueSource(strings = {"username", "firstName", "lastName", "email", "password"})
      public void notAllParameters(String parametrDeleted){
           Map<String,String> data = deletedParamInBody(parametrDeleted);
@@ -48,6 +55,8 @@ public class UserRegisterTest {
 
      }
      @Test
+     @Description("Created user with cut name")
+     @DisplayName("Negative test with cut username")
      public void cutName(){
           Map<String,String> cutName = new HashMap<>();
           cutName.put("username","t");
@@ -60,6 +69,8 @@ public class UserRegisterTest {
      }
 
      @Test
+     @Description("Created user with very long name")
+     @DisplayName("Negative test with very long username")
      public void veryLongName(){
           Map<String,String> longName = new HashMap<>();
           longName.put("username","Равным образом консультация с широким активом представляет собой интересный эксперимент"+

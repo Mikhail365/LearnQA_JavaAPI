@@ -1,10 +1,13 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -12,8 +15,11 @@ import java.util.Map;
 
 import static lib.DataGenerator.generateDatafromCreatedUser;
 
+@Epic("User edit cases")
 public class UserEditTest extends BaseTestCase {
     @Test
+    @Description("Edit user w/o Auth")
+    @DisplayName("Negative test for edit user")
     public void editUserWithoutAuth(){
 
 
@@ -36,6 +42,8 @@ public class UserEditTest extends BaseTestCase {
         Assertions.assertJsonByName(editResponse,"error","Auth token not supplied");
     }
     @Test
+    @Description("Edit user by other User")
+    @DisplayName("Negative test for edit user")
     public void editUserWithAuthOtherUser(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
@@ -74,6 +82,8 @@ public class UserEditTest extends BaseTestCase {
 
     }
     @Test
+    @Description("Edit email from the user on the bad email")
+    @DisplayName("Negative test for edit email")
     public void editUserErrorEmail(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
@@ -111,6 +121,8 @@ public class UserEditTest extends BaseTestCase {
 
     }
     @Test
+    @Description("Edit firstName from the user on the cut value")
+    @DisplayName("Negative test for edit firstName")
     public void editUserWithCutName(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
@@ -132,7 +144,7 @@ public class UserEditTest extends BaseTestCase {
                 .post("https://playground.learnqa.ru/api/user/login")
                 .andReturn();
 
-        //Edit User With Auth Other User
+        //Edit User With bad firstName
         String newName = "T";
         Map<String,String> cutName = new HashMap<>();
         cutName.put("firstName",newName);
