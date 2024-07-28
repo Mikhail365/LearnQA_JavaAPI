@@ -12,6 +12,11 @@ public class Assertions {
         int value = Response.jsonPath().getInt(name);
         assertEquals(expectedValue,value,"Json value is not equal");
     }
+    public static void assertJsonByName(Response Response, String name, String expectedValue){
+        Response.then().assertThat().body("$",hasKey(name));
+        String value = Response.jsonPath().getString(name);
+        assertEquals(expectedValue,value,"Json value is not equal");
+    }
     public static void assertResponseNotKeys(Response Response, String [] keys){
         Response.then().assertThat().body("$",not(hasKey(keys)));
     }
@@ -20,5 +25,8 @@ public class Assertions {
     }
     public static void assertResponseHasKeys(Response Response, String  key){
         Response.then().assertThat().body("$",hasKey(key));
+    }
+    public static void assertResponseCode(Response Response, int code){
+        Response.then().assertThat().statusCode(code);
     }
 }
