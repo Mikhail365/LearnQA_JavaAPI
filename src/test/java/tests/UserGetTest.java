@@ -2,6 +2,7 @@ package tests;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,10 @@ public class UserGetTest extends BaseTestCase {
                 .header("x-csrf-token",header)
                 .get("https://playground.learnqa.ru/api/user/101910")
                 .andReturn();
-        getInformationUser.prettyPrint();
+        String [] notKeys = {"firstName","lastName","email","password"};
+        ///getInformationUser.prettyPrint();
+        Assertions.assertResponseNotKeys(getInformationUser,notKeys);
+        Assertions.assertResponseHasKeys(getInformationUser,"username");
 
 
 
