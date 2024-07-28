@@ -4,6 +4,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import lib.ApiCoreRequests;
 import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,8 @@ import java.util.Map;
 
 @Epic("Get data user")
 public class UserGetTest extends BaseTestCase {
+    ApiCoreRequests requests = new ApiCoreRequests();
+
     @Description("Get data about other user")
     @DisplayName("Positive test for get data other user")
     @Test
@@ -22,21 +25,16 @@ public class UserGetTest extends BaseTestCase {
         authData.put("email", "vinkotov@example.com");
         authData.put("password", "1234");
 
-        Response responseGetAuth = RestAssured
-                .given()
-                .body(authData)
-                .post("https://playground.learnqa.ru/api/user/login")
-                .andReturn();
+        Response responseGetAuth = requests
+                .makeAuthUserRequest(authData,"https://playground.learnqa.ru/api/user/login");
+
         String header = getHeader(responseGetAuth, "x-csrf-token");
         String cookie = getCookie(responseGetAuth, "auth_sid");
         ///Int userId = getIntFromJson(responseGetAuth, "user_id");
 
-        Response getInformationUser = RestAssured
-                .given()
-                .cookies("auth_sid",cookie)
-                .header("x-csrf-token",header)
-                .get("https://playground.learnqa.ru/api/user/101910")
-                .andReturn();
+        Response getInformationUser = requests
+                .makeGetUserRequestAuthoricationOrGetDataUser(header,cookie,"https://playground.learnqa.ru/api/user/101910");
+
         String [] notKeys = {"firstName","lastName","email","password"};
         ///getInformationUser.prettyPrint();
         Assertions.assertResponseNotKeys(getInformationUser,notKeys);

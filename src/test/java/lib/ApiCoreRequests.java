@@ -2,7 +2,6 @@ package lib;
 
 import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 import java.util.Map;
@@ -43,6 +42,31 @@ public class ApiCoreRequests extends BaseTestCase{
                 .filter(new AllureRestAssured())
                 .body(data)
                 .put(url+userId)
+                .andReturn();
+    }
+    @Step("Make a get request for Authorication or get user data with cookie and header")
+    public  Response makeGetUserRequestAuthoricationOrGetDataUser(String header, String cookie, String url){
+        return given()
+                .filter(new AllureRestAssured())
+                .header("x-csrf-token",header)
+                .cookie("auth_sid",cookie)
+                .get(url)
+                .andReturn();
+    }
+    @Step("Make a get request for Authorication or get user data with cookie and header")
+    public  Response makeGetUserRequestAuthoricationOrGetDataUser(String url){
+        return given()
+                .filter(new AllureRestAssured())
+                .get(url)
+                .andReturn();
+    }
+    @Step("Make a delete request for delete User")
+    public  Response makeDeleteRequestForUser(String header, String cookie, String url, int userId){
+        return given()
+                .filter(new AllureRestAssured())
+                .header("x-csrf-token",header)
+                .cookie("auth_sid",cookie)
+                .delete(url + userId)
                 .andReturn();
     }
 }

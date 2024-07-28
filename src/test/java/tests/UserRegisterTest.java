@@ -2,9 +2,9 @@ package tests;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
-import io.restassured.RestAssured;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import lib.ApiCoreRequests;
+import lib.BaseTestCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,24 +16,19 @@ import java.util.Map;
 import static lib.DataGenerator.deletedParamInBody;
 import static lib.DataGenerator.generateDatafromCreatedUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Epic("User registration cases")
-public class UserRegisterTest {
+public class UserRegisterTest extends BaseTestCase {
+     ApiCoreRequests requests = new ApiCoreRequests();
      @Test
      @Description("Created user with error email")
      @DisplayName("Negative test for created user")
      public void createdUserWithErrorEmail(){
-          Map<String,String> data = new HashMap<>();
-          data.put("username","test");
-          data.put("firstName","Mikhail");
-          data.put("lastName","Test");
-          data.put("email","mikhailexample.com");
-          data.put("password","12345");
-          Response response = RestAssured
-                  .given()
-                  .body(data)
-                  .post("https://playground.learnqa.ru/api/user/")
-                  .andReturn();
+          Map<String,String> paramEmail = new HashMap<>();
+          paramEmail.put("email","mikhailexample.com");
+
+          Response response = requests
+                  .makeCreatedUserRequest(generateDatafromCreatedUser(paramEmail),"https://playground.learnqa.ru/api/user/");
 
           assertEquals("Invalid email format",response.asString(),"response not Equals");
      }
@@ -44,11 +39,9 @@ public class UserRegisterTest {
      public void notAllParameters(String parametrDeleted){
           Map<String,String> data = deletedParamInBody(parametrDeleted);
 
-          Response response = RestAssured
-                  .given()
-                  .body(data)
-                  .post("https://playground.learnqa.ru/api/user/")
-                  .andReturn();
+          Response response = requests
+                  .makeCreatedUserRequest(data,"https://playground.learnqa.ru/api/user/");
+
           assertEquals("The following required params are missed: "+parametrDeleted,response.asString(),"Error not Equals");
 
 
@@ -60,11 +53,9 @@ public class UserRegisterTest {
      public void cutName(){
           Map<String,String> cutName = new HashMap<>();
           cutName.put("username","t");
-          Response response = RestAssured
-                  .given()
-                  .body(generateDatafromCreatedUser(cutName))
-                  .post("https://playground.learnqa.ru/api/user/")
-                  .andReturn();
+          Response response = requests
+                  .makeCreatedUserRequest(generateDatafromCreatedUser(cutName),"https://playground.learnqa.ru/api/user/");
+
           assertEquals("The value of 'username' field is too short",response.asString(),"Error not Equals");
      }
 
@@ -76,11 +67,9 @@ public class UserRegisterTest {
           longName.put("username","Равным образом консультация с широким активом представляет собой интересный эксперимент"+
                           "проверки позиций, занимаемых участниками в отношении поставленных задач. Не следует, однако забывать,"+
                           "что дальнейшее развитие различных форм деятельности влечет за вывы");
-          Response response = RestAssured
-                  .given()
-                  .body(generateDatafromCreatedUser(longName))
-                  .post("https://playground.learnqa.ru/api/user/")
-                  .andReturn();
+          Response response = requests
+                  .makeCreatedUserRequest(generateDatafromCreatedUser(longName),"https://playground.learnqa.ru/api/user/");
+
           assertEquals("The value of 'username' field is too long",response.asString(),"Error not Equals");
      }
 }

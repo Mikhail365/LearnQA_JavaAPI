@@ -2,7 +2,6 @@ package tests;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
-import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lib.ApiCoreRequests;
@@ -70,10 +69,8 @@ public class UserEditTest extends BaseTestCase {
     public void editUserErrorEmail(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
-        JsonPath responseCreatedUser = RestAssured
-                .given()
-                .body(data)
-                .post("https://playground.learnqa.ru/api/user/")
+        JsonPath responseCreatedUser = (JsonPath) requests
+                .makeCreatedUserRequest(data,"https://playground.learnqa.ru/api/user/")
                 .jsonPath();
         String userId = responseCreatedUser.getString("id");
 
@@ -82,24 +79,15 @@ public class UserEditTest extends BaseTestCase {
         authData.put("email", data.get("email"));
         authData.put("password", data.get("password"));
 
-        Response responseGetAuth = RestAssured
-                .given()
-                .body(authData)
-                .post("https://playground.learnqa.ru/api/user/login")
-                .andReturn();
+        Response responseGetAuth = requests.makeAuthUserRequest(authData,"https://playground.learnqa.ru/api/user/login");
+
 
         //Edit User With Auth Other User
         String newEmail = "errorexapmle.com";
         Map<String,String> error = new HashMap<>();
         error.put("email",newEmail);
 
-        Response editResponse = RestAssured
-                .given()
-                .cookie("auth_sid", getCookie(responseGetAuth,"auth_sid"))
-                .header("x-csrf-token",getHeader(responseGetAuth,"x-csrf-token"))
-                .body(error)
-                .put("https://playground.learnqa.ru/api/user/" + userId)
-                .andReturn();
+        Response editResponse = requests.makeEditUserRequest(responseGetAuth,"https://playground.learnqa.ru/api/user/",userId,error);
         Assertions.assertJsonByName(editResponse,"error","Invalid email format");
 
     }
@@ -109,10 +97,8 @@ public class UserEditTest extends BaseTestCase {
     public void editUserWithCutName(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
-        JsonPath responseCreatedUser = RestAssured
-                .given()
-                .body(data)
-                .post("https://playground.learnqa.ru/api/user/")
+        JsonPath responseCreatedUser = (JsonPath) requests
+                .makeCreatedUserRequest(data,"https://playground.learnqa.ru/api/user/")
                 .jsonPath();
         String userId = responseCreatedUser.getString("id");
 
@@ -121,24 +107,14 @@ public class UserEditTest extends BaseTestCase {
         authData.put("email", data.get("email"));
         authData.put("password", data.get("password"));
 
-        Response responseGetAuth = RestAssured
-                .given()
-                .body(authData)
-                .post("https://playground.learnqa.ru/api/user/login")
-                .andReturn();
+        Response responseGetAuth = requests.makeAuthUserRequest(authData,"https://playground.learnqa.ru/api/user/login");
 
         //Edit User With bad firstName
         String newName = "T";
         Map<String,String> cutName = new HashMap<>();
         cutName.put("firstName",newName);
 
-        Response editResponse = RestAssured
-                .given()
-                .cookie("auth_sid", getCookie(responseGetAuth,"auth_sid"))
-                .header("x-csrf-token",getHeader(responseGetAuth,"x-csrf-token"))
-                .body(cutName)
-                .put("https://playground.learnqa.ru/api/user/" + userId)
-                .andReturn();
+        Response editResponse = requests.makeEditUserRequest(responseGetAuth,"https://playground.learnqa.ru/api/user/",userId,cutName);
         Assertions.assertJsonByName(editResponse,"error","The value for field `firstName` is too short");
 
     }
