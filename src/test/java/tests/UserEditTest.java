@@ -5,6 +5,7 @@ import io.qameta.allure.Epic;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import lib.ApiCoreRequests;
 import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import static lib.DataGenerator.generateDatafromCreatedUser;
 
 @Epic("User edit cases")
 public class UserEditTest extends BaseTestCase {
+    ApiCoreRequests requests = new ApiCoreRequests();
     @Test
     @Description("Edit user w/o Auth")
     @DisplayName("Negative test for edit user")
@@ -29,13 +31,8 @@ public class UserEditTest extends BaseTestCase {
         name.put("firstName",newName);
 
         //EditUserWithoutAuth
-
         Map<String,String> newData = generateDatafromCreatedUser(name);
-        Response editResponse = RestAssured
-                .given()
-                .body(newData)
-                .put("https://playground.learnqa.ru/api/user/" + userId)
-                .andReturn();
+        Response editResponse = requests.makeEditUserRequest("https://playground.learnqa.ru/api/user/",userId,newData);
 
 
         Assertions.assertResponseCode(editResponse,400);
@@ -47,11 +44,7 @@ public class UserEditTest extends BaseTestCase {
     public void editUserWithAuthOtherUser(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
-        Response responseCreatedUser = RestAssured
-                .given()
-                .body(data)
-                .post("https://playground.learnqa.ru/api/user/")
-                .andReturn();
+        Response responseCreatedUser = requests.makeCreatedUserRequest(data,"https://playground.learnqa.ru/api/user/");
         Assertions.assertResponseCode(responseCreatedUser,200);
 
         //Login User
@@ -59,11 +52,7 @@ public class UserEditTest extends BaseTestCase {
         authData.put("email", data.get("email"));
         authData.put("password", data.get("password"));
 
-        Response responseGetAuth = RestAssured
-                .given()
-                .body(authData)
-                .post("https://playground.learnqa.ru/api/user/login")
-                .andReturn();
+        Response responseGetAuth = requests.makeAuthUserRequest(authData,"https://playground.learnqa.ru/api/user/login");
 
         //Edit User With Auth Other User
         String userId = "101910";
@@ -71,13 +60,7 @@ public class UserEditTest extends BaseTestCase {
         Map<String,String> name = new HashMap<>();
         name.put("firstName",newName);
 
-        Response editResponse = RestAssured
-                .given()
-                .cookie("auth_sid", getCookie(responseGetAuth,"auth_sid"))
-                .header("x-csrf-token",getHeader(responseGetAuth,"x-csrf-token"))
-                .body(name)
-                .put("https://playground.learnqa.ru/api/user/" + userId)
-                .andReturn();
+        Response editResponse = requests.makeEditUserRequest(responseGetAuth,"https://playground.learnqa.ru/api/user/",userId,name);
         Assertions.assertJsonByName(editResponse,"error","This user can only edit their own data.");
 
     }
