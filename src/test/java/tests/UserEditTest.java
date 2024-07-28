@@ -39,7 +39,7 @@ public class UserEditTest extends BaseTestCase {
     }
     @Test
     @Description("Edit user by other User")
-    @DisplayName("Negative test for edit user")
+    @DisplayName("Negative test for edit user by other User")
     public void editUserWithAuthOtherUser(){
         //GENERATE USER
         Map<String,String> data = generateDatafromCreatedUser();
