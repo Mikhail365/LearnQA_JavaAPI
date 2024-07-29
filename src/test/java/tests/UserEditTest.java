@@ -1,7 +1,6 @@
 package tests;
 
-import io.qameta.allure.Description;
-import io.qameta.allure.Epic;
+import io.qameta.allure.*;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lib.ApiCoreRequests;
@@ -19,6 +18,8 @@ import static lib.DataGenerator.generateDatafromCreatedUser;
 public class UserEditTest extends BaseTestCase {
     ApiCoreRequests requests = new ApiCoreRequests();
     @Test
+    @Owner("Mikhail")
+    @Severity(SeverityLevel.CRITICAL)
     @Description("Edit user w/o Auth")
     @DisplayName("Negative test for edit user")
     public void editUserWithoutAuth(){
@@ -38,6 +39,8 @@ public class UserEditTest extends BaseTestCase {
         Assertions.assertJsonByName(editResponse,"error","Auth token not supplied");
     }
     @Test
+    @Owner("Mikhail")
+    @Severity(SeverityLevel.CRITICAL)
     @Description("Edit user by other User")
     @DisplayName("Negative test for edit user by other User")
     public void editUserWithAuthOtherUser(){
@@ -64,6 +67,8 @@ public class UserEditTest extends BaseTestCase {
 
     }
     @Test
+    @Owner("Mikhail")
+    @Severity(SeverityLevel.CRITICAL)
     @Description("Edit email from the user on the bad email")
     @DisplayName("Negative test for edit email")
     public void editUserErrorEmail(){
@@ -92,6 +97,8 @@ public class UserEditTest extends BaseTestCase {
 
     }
     @Test
+    @Owner("Mikhail")
+    @Severity(SeverityLevel.CRITICAL)
     @Description("Edit firstName from the user on the cut value")
     @DisplayName("Negative test for edit firstName")
     public void editUserWithCutName(){
